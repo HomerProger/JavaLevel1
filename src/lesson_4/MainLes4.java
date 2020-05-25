@@ -3,8 +3,10 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class MainLes4 {
-    static final int SIZE = 9;
-    static final int DOTS_TO_WIN = 5;
+    static int noWinX;
+    static int noWinY;
+    static final int SIZE = 5;
+    static final int DOTS_TO_WIN = 4;
 
     static final char DOT_X = 'X';
     static final char DOT_O = 'O';
@@ -34,7 +36,12 @@ public class MainLes4 {
                 break;
             }
 
-            aiTurn();
+            if (checkPreWin(DOT_X)) {
+                aiBlockTurn();
+            } else {
+                aiTurn();
+            }
+
             printMap();
 
             if (checkWin(DOT_O)) {
@@ -116,31 +123,96 @@ public class MainLes4 {
     public static boolean checkWin(char c) {
 
         for (int i = 0; i < SIZE; i++) {
-            for (int j=0; j < SIZE; j++) {
-                int check1=0;
-                int check2=0;
-                int check3=0;
-                int check4=0;
+            for (int j = 0; j < SIZE; j++) {
+                int check1 = 0;
+                int check2 = 0;
+                int check3 = 0;
+                int check4 = 0;
 
-                for (int n=0;n<DOTS_TO_WIN;n++){
-                    if((i+DOTS_TO_WIN-1)<SIZE&&(j+DOTS_TO_WIN-1)<SIZE&&map[i+n][j+n]==c){
+                for (int n = 0; n < DOTS_TO_WIN; n++) {
+                    if ((i + DOTS_TO_WIN - 1) < SIZE && (j + DOTS_TO_WIN - 1) < SIZE && map[i + n][j + n] == c) {
                         check1++;
                     }
-                    if((i-DOTS_TO_WIN+1)>=0&&(j+DOTS_TO_WIN-1)<SIZE&&map[i-n][j+n]==c){
+                    if ((i - DOTS_TO_WIN + 1) >= 0 && (j + DOTS_TO_WIN - 1) < SIZE && map[i - n][j + n] == c) {
                         check2++;
                     }
-                    if((j+DOTS_TO_WIN-1)<SIZE&&map[i][j+n]==c){
+                    if ((j + DOTS_TO_WIN - 1) < SIZE && map[i][j + n] == c) {
                         check3++;
                     }
-                    if((i+DOTS_TO_WIN-1)<SIZE&&map[i+n][j]==c){
+                    if ((i + DOTS_TO_WIN - 1) < SIZE && map[i + n][j] == c) {
                         check4++;
                     }
                 }
-                if(check1==DOTS_TO_WIN||check2==DOTS_TO_WIN||check3==DOTS_TO_WIN||check4==DOTS_TO_WIN){
+                if (check1 == DOTS_TO_WIN || check2 == DOTS_TO_WIN || check3 == DOTS_TO_WIN || check4 == DOTS_TO_WIN) {
                     return true;
                 }
             }
         }
-        return  false;
+        return false;
+    }
+
+    public static boolean checkPreWin(char c) {
+
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                int check1 = 0;
+                int check2 = 0;
+                int check3 = 0;
+                int check4 = 0;
+
+                for (int n = 0; n < DOTS_TO_WIN - 1; n++) {
+                    if ((i + DOTS_TO_WIN - 1) < SIZE && (j + DOTS_TO_WIN - 1) < SIZE && map[i + n][j + n] == c) {
+                        check1++;
+                    }
+                    if ((i - DOTS_TO_WIN + 1) >= 0 && (j + DOTS_TO_WIN - 1) < SIZE && map[i - n][j + n] == c) {
+                        check2++;
+                    }
+                    if ((j + DOTS_TO_WIN - 1) < SIZE && map[i][j + n] == c) {
+                        check3++;
+                    }
+                    if ((i + DOTS_TO_WIN - 1) < SIZE && map[i + n][j] == c) {
+                        check4++;
+                    }
+                }
+
+                if (check1 == DOTS_TO_WIN - 1&&map[i + DOTS_TO_WIN - 1][j + DOTS_TO_WIN - 1]==DOT_EMPTY) {
+                    noWinY=i + DOTS_TO_WIN - 1;
+                    noWinX=j + DOTS_TO_WIN - 1;
+                    return true;
+                }
+                if (check2 == DOTS_TO_WIN - 1&&map[i - DOTS_TO_WIN + 1][j + DOTS_TO_WIN - 1]==DOT_EMPTY) {
+                    noWinY=i - DOTS_TO_WIN + 1;
+                    noWinX=j + DOTS_TO_WIN - 1;
+                    return true;
+                }
+                if (check3 == DOTS_TO_WIN - 1&&map[i][j + DOTS_TO_WIN - 1]==DOT_EMPTY) {
+                    noWinY=i;
+                    noWinX=j + DOTS_TO_WIN - 1;
+                    return true;
+                }
+                if (check4 == DOTS_TO_WIN - 1&&map[i + DOTS_TO_WIN - 1][j]==DOT_EMPTY) {
+                    noWinY=i + DOTS_TO_WIN - 1;
+                    noWinX=j;
+                    return true;
+                }
+
+            }
+        }
+        return false;
+    }
+
+    public static void aiBlockTurn() {
+        int x, y;
+        if(isCellValid(noWinY, noWinX)) {
+            map[noWinY][noWinX] = DOT_O;
+        }else{
+            do {
+                x = random.nextInt(SIZE);
+                y = random.nextInt(SIZE);
+            } while (!isCellValid(y, x));
+            map[y][x] = DOT_O;
+        }
+
+
     }
 }
